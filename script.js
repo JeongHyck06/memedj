@@ -22,6 +22,10 @@ yt.onsubmit = (e) => {
 
 // --- Launchpad (Web Audio: 미리 디코딩해두고 버퍼 재생 → 지연 없음) ---
 const ctx = new AudioContext({ latencyHint: 'interactive' });
+// iOS: Web Audio는 기본 'ambient'라 무음 스위치에 막힘 → 'playback'으로 바꾸면 소리 남 (Safari 16.4+)
+if ('audioSession' in navigator) navigator.audioSession.type = 'playback';
+// iOS는 터치 제스처 안에서 resume 해야 잠금 해제됨
+addEventListener('touchend', () => ctx.resume(), { once: true });
 const buffers = {},
     padEl = {},
     playing = {};
